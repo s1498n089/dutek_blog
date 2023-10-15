@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>修復LattePanda Audio Driver</title>
+        <meta name="description" content="提供綜合咖啡與健康有機食物的咖啡店">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Philosopher" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <style type="text/css">
+        .secTitle{
+            color: #443322;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+    </style>
+    <body>
+        <div id="news" class="big-bg">
+            <header class="page-header wrapper">
+                <!--<h1><a href="index.html"><img class="logo" src="images/logo.svg" alt="WCB Cafe 首頁"></a></h1>-->
+                <nav>
+                    <ul class="main-nav">
+                        <li><a href="news.html">Home</a></li>
+                        <li><a href="menu.html">Blog</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <div class="wrapper">
+                <h2 class="page-title">Blog</h2>
+            </div><!-- /.wrapper -->
+        </div><!-- /#news -->
+
+        <div class="news-contents wrapper">
+            <article>
+                <header class="post-info">
+                    <h2 class="post-title">在CR200 4GB/64GB LattePanda重新安裝Win10家用版後, 修復Audio Driver</h2>
+                    <p class="post-date">10/1 <span>2021</span></p>
+                    <p class="post-cat">類別：LattePanda</p>
+                </header>
+                <main>
+                    <section id="sec1">
+                      <h1 class = "secTitle">前言</h1>
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LattePanda(LP)硬體規格上是個比Raspberry Pi4還要強大的SBC(單板電腦), 重點是與pi4差異最大的是, pi4使用的是ARM指令集架構, 在pi4跑Win10雖然有模擬環境可以執行x86的程式, 但還是有許多軟體無法在模擬環境上執行; 不過LattePanda不一樣, 其CPU為Intel指令集架構, 可以直接執行x86的程式,  而且其硬體也屌打Pi4(雖然LP價格也頗高的啦~), 所以直接灌Linux系統(也可以使用虛擬機但需考慮到效能會較差)也是很吸引人的。 為了要做IoT的狠腳色, 拿來裝一堆軟體、寫一堆程式、亂灌OS是很正常的, 但不論是系統搞壞了, 還是想更新其他OS, 懂得重新安裝OS就很重要了。
+                      </p>
+
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LattePanda產品目前主要分成下列3個系列, 每個系列又有不同的硬體規格以及是否配套產品金鑰之分, 見下圖(下文只對LattePanda系列做討論; LattePanda Alpha, LattePanda Delta系列不在討論之內)。<br/>
+                        <a href="http://docs.lattepanda.com/" target="_blank"><img width="100%" src="images/product_series.jpg"/></a>
+                        
+                      </p>
+
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LattePanda系列產品在硬體上除了上表用RAM / eMMC / 產品金鑰的分類外, <span style="color:red">其實還有早期與近期的硬體版本之分</sapn>, <span style="color:black">見下圖官方對不同硬體版本做Win10家用版的Image檔的分類。</sapn>
+                        <a href="http://docs.lattepanda.com/content/1st_edition/os/" target="_blank"><img width="100%" src="images/product_version.jpg"/></a>
+                        從圖中可以發現早期與近期的硬體version分類為
+                          <li>x86 version for <span style="color:red">z8300</sapn> <span style="color:black">2GB+32GB</sapn></li>
+                          <li>x64 version for <span style="color:red">z8300</sapn> <span style="color:black">4GB+64GB</sapn></li>
+                          <li>x86 version for <span style="color:red">CR110</sapn>  <span style="color:black">z8350 2GB+32GB</sapn></li>
+                          <li>x64 version for <span style="color:red">CR110</sapn> <span style="color:black">z8350 4GB+64GB</sapn></li>
+                          <li>x64 version for all <span style="color:red">CR200</sapn> <span style="color:black">z8350 (2GB+32GB and 4GB+64GB)</sapn></li>
+                      </p>
+
+                      <p>
+                        我想若不是清庫存, 現在基本上買到的都是最新的CR200的version了。 我購買的是CR200 4GB RAM/64GB eMMC帶授權(Win10 企業版)的LattePanda。 但其實想灌家用版的Win10也都可以, 只是該家用版的Win10沒有產品金鑰激活而已(沒激活也可以幹很多事了啦~)。
+                      </p>
+
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大致上了解了LP的產品線的分類後, 我們就可以查看官網提供對應硬體版本的Win10 Image檔(見上圖), 來重刷LattePanda的OS。 
+                      </p>
+                    </section>
+
+                    <br>
+
+                    <section id="sec2">
+                      <h1 class = "secTitle">安裝</h1>
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我想說試一下官網文件<a href="http://docs.lattepanda.com/content/1st_edition/os/" target="_blank">Re-install Windows 10 Home</a>提供的image檔, 將我的LP刷成家用版來玩。 為了重灌成Win10家用版, <span style="color:red">對應到CR200的LP, 要先下載官網提供的<a href="https://www.dropbox.com/s/85rtj34atn0p99v/LattePanda%20v1.1%204G%20x64%20image.zip?dl=0" target="_blank">"x64 version for all CR200 z8350 (2GB+32GB and 4GB+64GB)image檔"</a></sapn><span style="color:black"> , 下載下來後按照官網提示的步驟來做即可, 見下述</sapn>
+                         <a href="http://docs.lattepanda.com/content/1st_edition/os/" target="_blank"><img width="100%" src="images/re_install_win10_home_sop.jpg"/></a>
+                      </p>
+
+                      <p>
+                        第1步我是直接用SD Formatter V4.0程式格式化成FAT32, 並且Label標註成WINPE。
+                        <img width="50%" src="images/格式化USB.png"/>
+                      </p>
+
+                      <p>
+                        第2步就是解壓縮而已, 不過在解壓縮的過程當中, 我發現官網對CR200提供的<a href="https://www.dropbox.com/s/85rtj34atn0p99v/LattePanda%20v1.1%204G%20x64%20image.zip?dl=0" target="_blank">"x64 version for all CR200 z8350 (2GB+32GB and 4GB+64GB)image檔"</a>, 其內容所包的資料夾見下圖
+                        <img width="50%" src="images/unzip_check_content.jpg"/>
+                        </br>
+                        哪尼? 為啥資料夾名稱是CR110勒, 到底有沒有問題啊, 但就姑且相信它吧, 把裡面的所有內容, 都放到已經格式化成FAT32的隨身碟(我使用32GB的SD卡+讀卡機)裡, 見下圖
+                        <img width="100%" src="images/Unzip1.jpg"/>其餘步驟, 照著上面去做就可以了。 它的概念就是若你插上可Bootable的外部USB碟後, LP的BIOS預設就會從可Bootable的外部USB碟那裏開機, 若沒有插入或是插入不可Bootable的外部USB碟(比如存著一般資料的隨身碟), 它就會從eMMC開機; 你可以在按開機後, 反覆按ESC鍵直到確定進入BIOS, 然後來看Boot的第一順位是否為外部USB碟啟動, 若不是請自行調整成外部USB碟啟動來開機。
+                      </p>
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;從外部USB碟啟動後, LP就開始自動加載安裝程式到RAM, 然後執行該安裝程式, 將Win10安裝到eMMC, 一切都是自動的, <span style="color:red">結束後要重啟之前, 務必將你的USB碟卸下來(卸下來不會怎樣, 因為安裝程式是在RAM執行, 但是要確保整個安裝都已經完成, 即它已經給你reboot的訊息)</sapn> <span style="color:black">, 否則reboot又會再安裝一遍XD, 卸下USB碟後, 重啟LP就會開跑Win10了。</sapn> 
+                       <img width="100%" src="images/win10_home_info.jpg"/>
+                      </p>
+                    </section>
+                    
+                    <br>
+
+                    <section id="sec3">
+                      <h1 class = "secTitle">問題</h1>
+                     <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但就在一切看似美好之時, 督爛的事就發生了, 當我將喇叭或耳機的3.5mm接頭, 接上Audio Jack時, 它並沒有任何音訊輸出, 查看裝置管理員的audio driver與查看音效程式, 該驅動看似都有裝好而且正常運行(見下圖), 但就是不給你任何聲音, 然後在<a href="https://www.lattepanda.com/forum" target="_blank">LattePanda論壇</a>找遍<a href="https://www.lattepanda.com/forum-c20" target="_blank">Troubleshooting</a>, 一樣沒找到(查找過程, 是有人問類似的問題但那些留言並沒有獲得正式解答)。
+                        <br/>
+                        <img style="display:inline-block" width="45%" src="images/audio_driver_list2.jpg"/>
+                        <img style="display:inline-block" width="45%" src="images/audio_driver_list.jpg"/>
+                        
+                      </p>
+
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不過我一開始也沒有在預先裝好的Win10企業版先行確認我的Audio Jack是否是好的, 也就是我得要先排出是否為硬體問題, 所以我又先將LP刷回Win10企業版, 發現該Win10企業版的Audio Jack可以輸出音訊, 表示硬體是好的, 那麼就是 <span style="color:red">官網提供的Win10家用版<a href="https://www.dropbox.com/s/85rtj34atn0p99v/LattePanda%20v1.1%204G%20x64%20image.zip?dl=0" target="_blank">"x64 version for all CR200 z8350 (2GB+32GB and 4GB+64GB)"</a> image檔中, Audio Driver有問題。</sapn> 
+
+
+                      </p>
+                    </section>
+                     
+                    <br>
+
+                    <section id="sec4">
+                      <h1 class = "secTitle">解決</h1>
+                      <p>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;解決辦法就是要找到正確的Audio Driver並安裝, 好在LattePanda網站管理員有提供<a href="http://www.lattepanda.com/forum/viewtopic.php?f=16&t=275" target="_blank">LATTEPANDA RESOURCES</a>, 在這裡我們可以載到LattePanda的相關資源, 在該頁面點擊<a href="https://github.com/LattePandaTeam" target="_blank">Github</a>, 並到<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software" target="_blank">LattePanda-Win10-Software</a>的<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software/tree/master/Drivers/4G64GB_Drivers" target="_blank">4G64GB_Drivers</a>路徑, 其中README.md教程做的是所有外設driver的更新, 但這裏我們僅需要做Audio Driver的更新。
+                      </p>
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;先到LattePanda GitHub的<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software/tree/master/Drivers/4G64GB_Drivers/Audio" target="_blank">LattePanda-Win10-Software/Drivers/4G64GB_Drivers/Audio路徑</a>查看, 你會發現它的Audio Driver有分成v1.0與V1.1的zip檔, 把他們下載下來, 並打開來比較一下。
+                        <br/>
+                        <img  width="100%" src="images/audio_driver_v1_1.jpg"/>
+                        <img  width="100%" src="images/audio_driver_v1_0.jpg"/>
+                      </p>
+                      <p>
+                        你可以發現v1.1提供3個更新的檔案要你直接取代掉v1.0原有的3個檔案, 不過在取代前我們來看一下<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software/tree/master/Drivers/4G64GB_Drivers/All-in-one%20Pack/MRD-64bit-Intel-Driver-Release/Drivers/Audio" target="_blank">All-in-One路徑的Audio Driver</a>是哪一個版本的, 答案是v1.0版本的, 所以問題知曉了, 那就是Audio Driver裝到舊的版本了, 必須自己重新裝成v1.1的Audio Driver。
+                      </p>
+                      <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;為了只單獨裝Audio Driver, 我們先到官網提供的<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software/blob/master/Drivers/4G64GB_Drivers/All-in-one%20Pack/MRD-64bit-Intel-Driver-Release/Scripts/install_DF_S70CR100.bat" target="_blank">安裝所有Driver的bat檔路徑中</a>, 複製其中安裝Audio Driver的腳本並修改一下, 作法如下:
+                        <br/>
+                        1. 首先在C:\下創建一個名稱為AudioDriver的資料夾, 將v1.1與v1.0的zip檔解壓縮到AudioDriver底下, 然後將v1.1的3檔案取代掉v1.0原有的3個檔案。
+                        <img  width="100%" src="images/audio_driver_cmd1.jpg"/>
+                      </p>
+                      <p>
+                        2. 然後再開啟記事本建立一個bat檔, 內容如下圖(此內容就是從<a href="https://github.com/LattePandaTeam/LattePanda-Win10-Software/blob/master/Drivers/4G64GB_Drivers/All-in-one%20Pack/MRD-64bit-Intel-Driver-Release/Scripts/install_DF_S70CR100.bat" target="_blank">安裝所有Driver的bat檔路徑中</a>將Audio Driver的部分複製出來並修改而已), 最後將其檔名存成install_audio_driver_v_1_1, 存在當前driver安裝檔的目錄下。
+                        <img  width="100%" src="images/audio_driver_cmd2.jpg"/>
+                      </p>
+
+                      <p>
+                        3. 然後再以系統管理員身分執行該bat檔, 視窗閃一下就會馬上關閉, 這沒關係, 重點是它執行了安裝腳本。
+                        <img  width="100%" src="images/audio_driver_cmd3.jpg"/>
+                      </p>
+
+                      <p>
+                        4. Reboot LP後, 就大功告成了, Audio Jack可以work了。
+                      </p>
+                    </section>
+                </main>
+            </article>
+
+            <aside>
+                <h3 class="sub-title">文章類別</h3>
+                <ul class="sub-menu">
+                    <li><a href="#">Arduino</a></li>
+                    <li><a href="#">STM32</a></li>
+                    <li><a href="#">Python</a></li>
+                    <li><a href="#">Node.js</a></li>
+                    <li><a href="#">Rapberry Pi</a></li>
+                    <li><a href="#">LattePanda</a></li>
+                    <li><a href="#">LVGL</a></li>
+                    <li><a href="#">前端技術</a></li>
+                    <li><a href="#">3D列印</a></li>
+                    <li><a href="#">其它</a></li>
+                </ul>
+
+                <h3 class="sub-title">關於本站</h3>
+                <p>
+                    我是個對IT技術非常有熱忱的工程師Dutek, 這個網站主要是我學習的紀錄, 也在此分享給大家參考, 也歡迎你在文章下方留言區留言, 一起交流討論。
+                </p>
+            </aside>
+        </div><!-- /.news-contents -->
+
+        <footer>
+            <div class="wrapper">
+                <p><small>&copy; 2021 Dutek</small></p>
+            </div>
+        </footer>
+    </body>
+</html>
